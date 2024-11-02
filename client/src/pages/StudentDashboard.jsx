@@ -338,6 +338,9 @@
 // };
 // export default StudentDashboard;
 
+// todo studentDashboard.jsx
+
+// todo
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import EventCard from "../components/EventCard";
@@ -366,12 +369,10 @@ const StudentDashboard = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        // Fetch upcoming events
         const eventsResponse = await fetch("/api/events");
         const eventsData = await eventsResponse.json();
         setUpcomingEvents(eventsData);
 
-        // Fetch registered events for this student
         if (studentInfo) {
           const registeredResponse = await fetch(
             `/api/students/${studentInfo.id}/registeredEvents`
@@ -388,56 +389,108 @@ const StudentDashboard = () => {
   }, [studentInfo]);
 
   if (isLoading) {
-    return <div className="text-center mt-10">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-lg text-white font-medium">
+            Loading your dashboard...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-200 via-blue-200 to-indigo-300">
+    <div className="min-h-screen relative bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
+      {/* Animated Background Shapes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white/10 rounded-full mix-blend-overlay animate-pulse" />
+        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-300/10 rounded-full mix-blend-overlay animate-pulse delay-700" />
+        <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-pink-300/10 rounded-full mix-blend-overlay animate-pulse delay-500" />
+      </div>
+
       <Header />
-      <div className="container mx-auto px-6 py-12">
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8 transition-transform transform hover:scale-105 duration-300">
-          <h1 className="text-4xl font-extrabold text-center text-indigo-700 mb-4">
-            Welcome, {studentInfo.fullName}!
-          </h1>
-          <div className="text-center">
-            <p className="text-lg text-gray-600 mb-2">
-              <span className="font-semibold text-indigo-800">
-                Institution:
-              </span>{" "}
-              {studentInfo.institution}
-            </p>
-            <p className="text-lg text-gray-600 mb-2">
-              <span className="font-semibold text-indigo-800">Email:</span>{" "}
-              {studentInfo.email}
-            </p>
-            <p className="text-lg text-gray-600 mb-2">
-              <span className="font-semibold text-indigo-800">Interests:</span>{" "}
-              {studentInfo.interests.join(", ")}
-            </p>
+      <div className="container mx-auto px-4 py-8 space-y-8 relative z-10">
+        {/* Welcome Card */}
+        <div className="w-full overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl">
+          <div className="p-8">
+            <div className="text-center">
+              <h1 className="text-5xl font-bold text-white mb-6 drop-shadow-lg">
+                Welcome back, {studentInfo.fullName}!
+              </h1>
+              <div className="mt-4 space-y-3 text-white/90">
+                <p className="text-lg">
+                  <span className="font-semibold bg-white/20 px-3 py-1 rounded-lg mr-2">
+                    Institution:
+                  </span>
+                  {studentInfo.institution}
+                </p>
+                <p className="text-lg">
+                  <span className="font-semibold bg-white/20 px-3 py-1 rounded-lg mr-2">
+                    Email:
+                  </span>
+                  {studentInfo.email}
+                </p>
+              </div>
+              <div className="mt-6">
+                <p className="font-semibold text-white mb-3 text-lg">
+                  Your Interests
+                </p>
+                <div className="flex flex-wrap gap-3 justify-center">
+                  {studentInfo.interests.map((interest) => (
+                    <span
+                      key={interest}
+                      className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium backdrop-blur-sm hover:bg-white/30 transition-colors"
+                    >
+                      {interest}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Upcoming Events Section */}
-          <div className="lg:col-span-2">
-            <h3 className="text-3xl font-bold text-indigo-800 mb-6">
-              Upcoming Events
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex items-center justify-between bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <h3 className="text-2xl font-bold text-white">Upcoming Events</h3>
+              <span className="text-sm text-white font-medium px-4 py-2 bg-white/20 rounded-full">
+                {upcomingEvents.length} events available
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {upcomingEvents.map((event) => (
-                <EventCard key={event._id} event={event} />
+                <div
+                  key={event._id}
+                  className="transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                >
+                  <EventCard event={event} />
+                </div>
               ))}
             </div>
           </div>
 
           {/* Registered Events Section */}
-          <div className="lg:col-span-1">
-            <h3 className="text-3xl font-bold text-indigo-800 mb-6">
-              Registered Events
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-8">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <h3 className="text-2xl font-bold text-white">
+                Registered Events
+              </h3>
+              <span className="text-sm text-white font-medium px-4 py-2 bg-white/20 rounded-full">
+                {registeredEvents.length} registered
+              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-6">
               {registeredEvents.map((event) => (
-                <EventCard key={event._id} event={event} />
+                <div
+                  key={event._id}
+                  className="transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                >
+                  <EventCard event={event} />
+                </div>
               ))}
             </div>
           </div>

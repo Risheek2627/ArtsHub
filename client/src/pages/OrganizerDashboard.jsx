@@ -418,15 +418,212 @@
 // export default OrganizerDashboard;
 
 // todo    OrganizerDashboard.jsx
+// import React, { useState } from "react";
+// import Header from "../components/Header";
+// import { useNavigate } from "react-router-dom";
+// import { useEvents } from "../context/EventContext";
+
+// const OrganizerDashboard = () => {
+//   const { addEvent } = useEvents();
+//   const navigate = useNavigate();
+//   const [activeTab, setActiveTab] = useState("postEvent"); // Active tab for toggling views
+//   const [imageFiles, setImageFiles] = useState([]);
+//   const [formData, setFormData] = useState({
+//     title: "",
+//     description: "",
+//     dateTime: "",
+//     location: "",
+//   });
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
+
+//   const handleImageUpload = (e) => {
+//     const files = Array.from(e.target.files);
+//     setImageFiles((prev) => [...prev, ...files]);
+//   };
+
+//   const removeImage = (index) => {
+//     setImageFiles((prev) => prev.filter((_, i) => i !== index));
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     if (isSubmitting) return; // Prevent multiple submissions
+
+//     setIsSubmitting(true); // Disable the submit button
+
+//     const newEvent = {
+//       ...formData,
+//       images: imageFiles,
+//       createdAt: new Date().toISOString(),
+//     };
+
+//     // Call the addEvent function to update context
+//     addEvent(newEvent);
+
+//     // Reset form
+//     setFormData({ title: "", description: "", dateTime: "", location: "" });
+//     setImageFiles([]);
+//     navigate("/events");
+
+//     setIsSubmitting(false); // Re-enable the submit button
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-gray-50">
+//       <Header />
+//       <div className="container mx-auto px-4 py-8">
+//         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+//           <div className="lg:col-span-4">
+//             <div className="bg-white rounded-lg shadow p-6">
+//               {activeTab === "postEvent" && (
+//                 <div>
+//                   <h2 className="text-2xl font-bold mb-6">Post New Event</h2>
+//                   <form className="space-y-6" onSubmit={handleSubmit}>
+//                     <div>
+//                       <label className="block text-gray-700 mb-2">
+//                         Event Title
+//                       </label>
+//                       <input
+//                         type="text"
+//                         name="title"
+//                         value={formData.title}
+//                         onChange={handleChange}
+//                         className="w-full p-2 border rounded"
+//                         placeholder="Enter event title"
+//                         required
+//                       />
+//                     </div>
+
+//                     <div>
+//                       <label className="block text-gray-700 mb-2">
+//                         Event Description
+//                       </label>
+//                       <textarea
+//                         name="description"
+//                         value={formData.description}
+//                         onChange={handleChange}
+//                         className="w-full p-2 border rounded h-32"
+//                         placeholder="Enter event description"
+//                         required
+//                       />
+//                     </div>
+
+//                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                       <div>
+//                         <label className="block text-gray-700 mb-2">
+//                           Date and Time
+//                         </label>
+//                         <input
+//                           type="datetime-local"
+//                           name="dateTime"
+//                           value={formData.dateTime}
+//                           onChange={handleChange}
+//                           className="w-full p-2 border rounded"
+//                           required
+//                         />
+//                       </div>
+
+//                       <div>
+//                         <label className="block text-gray-700 mb-2">
+//                           Location
+//                         </label>
+//                         <input
+//                           type="text"
+//                           name="location"
+//                           value={formData.location}
+//                           onChange={handleChange}
+//                           className="w-full p-2 border rounded"
+//                           placeholder="Enter event location"
+//                           required
+//                         />
+//                       </div>
+//                     </div>
+
+//                     <div>
+//                       <label className="block text-gray-700 mb-2">
+//                         Event Images
+//                       </label>
+//                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+//                         <input
+//                           type="file"
+//                           multiple
+//                           accept="image/*"
+//                           onChange={handleImageUpload}
+//                           className="hidden"
+//                           id="image-upload"
+//                         />
+//                         <label
+//                           htmlFor="image-upload"
+//                           className="cursor-pointer text-blue-600 hover:text-blue-800"
+//                         >
+//                           Click to upload images
+//                           <br />
+//                           <span className="text-gray-500">
+//                             or drag and drop them here
+//                           </span>
+//                         </label>
+//                       </div>
+
+//                       {imageFiles.length > 0 && (
+//                         <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+//                           {imageFiles.map((file, index) => (
+//                             <div key={index} className="relative">
+//                               <img
+//                                 src={URL.createObjectURL(file)}
+//                                 alt={`Event image ${index + 1}`}
+//                                 className="w-full h-32 object-cover rounded"
+//                               />
+//                               <button
+//                                 type="button"
+//                                 onClick={() => removeImage(index)}
+//                                 className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+//                               >
+//                                 ×
+//                               </button>
+//                             </div>
+//                           ))}
+//                         </div>
+//                       )}
+//                     </div>
+
+//                     <button
+//                       type="submit"
+//                       className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+//                     >
+//                       Post Event
+//                     </button>
+//                   </form>
+//                 </div>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default OrganizerDashboard;
+
+// todo extra stylings
 import React, { useState } from "react";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "../context/EventContext";
+import { Calendar, MapPin, Image as ImageIcon, X } from "lucide-react";
 
 const OrganizerDashboard = () => {
   const { addEvent } = useEvents();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("postEvent"); // Active tab for toggling views
+  const [activeTab, setActiveTab] = useState("postEvent");
   const [imageFiles, setImageFiles] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -455,9 +652,9 @@ const OrganizerDashboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSubmitting) return; // Prevent multiple submissions
+    if (isSubmitting) return;
 
-    setIsSubmitting(true); // Disable the submit button
+    setIsSubmitting(true);
 
     const newEvent = {
       ...formData,
@@ -465,144 +662,148 @@ const OrganizerDashboard = () => {
       createdAt: new Date().toISOString(),
     };
 
-    // Call the addEvent function to update context
     addEvent(newEvent);
-
-    // Reset form
     setFormData({ title: "", description: "", dateTime: "", location: "" });
     setImageFiles([]);
     navigate("/events");
-
-    setIsSubmitting(false); // Re-enable the submit button
+    setIsSubmitting(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
       <Header />
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-4">
-            <div className="bg-white rounded-lg shadow p-6">
-              {activeTab === "postEvent" && (
-                <div>
-                  <h2 className="text-2xl font-bold mb-6">Post New Event</h2>
-                  <form className="space-y-6" onSubmit={handleSubmit}>
-                    <div>
-                      <label className="block text-gray-700 mb-2">
-                        Event Title
-                      </label>
-                      <input
-                        type="text"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        className="w-full p-2 border rounded"
-                        placeholder="Enter event title"
-                        required
-                      />
-                    </div>
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-purple-100">
+            <div className="p-8">
+              <h2 className="text-3xl font-bold text-purple-900 mb-8">
+                Create New Event
+              </h2>
+              <form className="space-y-8" onSubmit={handleSubmit}>
+                <div className="space-y-6">
+                  <div>
+                    <label className="text-sm font-medium text-purple-900 mb-2 block">
+                      Event Title
+                    </label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      className="w-full p-3 bg-white border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                      placeholder="Enter an engaging title for your event"
+                      required
+                    />
+                  </div>
 
-                    <div>
-                      <label className="block text-gray-700 mb-2">
-                        Event Description
-                      </label>
-                      <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        className="w-full p-2 border rounded h-32"
-                        placeholder="Enter event description"
-                        required
-                      />
-                    </div>
+                  <div>
+                    <label className="text-sm font-medium text-purple-900 mb-2 block">
+                      Event Description
+                    </label>
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      className="w-full p-3 bg-white border border-purple-200 rounded-lg h-40 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                      placeholder="Describe your event in detail"
+                      required
+                    />
+                  </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-gray-700 mb-2">
-                          Date and Time
-                        </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="relative">
+                      <label className="text-sm font-medium text-purple-900 mb-2 block">
+                        Date and Time
+                      </label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400 h-5 w-5" />
                         <input
                           type="datetime-local"
                           name="dateTime"
                           value={formData.dateTime}
                           onChange={handleChange}
-                          className="w-full p-2 border rounded"
+                          className="w-full pl-10 p-3 bg-white border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
                           required
                         />
                       </div>
+                    </div>
 
-                      <div>
-                        <label className="block text-gray-700 mb-2">
-                          Location
-                        </label>
+                    <div className="relative">
+                      <label className="text-sm font-medium text-purple-900 mb-2 block">
+                        Location
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400 h-5 w-5" />
                         <input
                           type="text"
                           name="location"
                           value={formData.location}
                           onChange={handleChange}
-                          className="w-full p-2 border rounded"
-                          placeholder="Enter event location"
+                          className="w-full pl-10 p-3 bg-white border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                          placeholder="Event venue or address"
                           required
                         />
                       </div>
                     </div>
+                  </div>
 
-                    <div>
-                      <label className="block text-gray-700 mb-2">
-                        Event Images
-                      </label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                        <input
-                          type="file"
-                          multiple
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                          className="hidden"
-                          id="image-upload"
-                        />
-                        <label
-                          htmlFor="image-upload"
-                          className="cursor-pointer text-blue-600 hover:text-blue-800"
-                        >
+                  <div>
+                    <label className="text-sm font-medium text-purple-900 mb-2 block">
+                      Event Images
+                    </label>
+                    <div className="border-2 border-dashed border-purple-200 bg-white rounded-lg p-8 text-center hover:border-purple-500 transition-colors">
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        id="image-upload"
+                      />
+                      <label htmlFor="image-upload" className="cursor-pointer">
+                        <ImageIcon className="mx-auto h-12 w-12 text-purple-400 mb-4" />
+                        <span className="text-purple-600 font-medium">
                           Click to upload images
-                          <br />
-                          <span className="text-gray-500">
-                            or drag and drop them here
-                          </span>
-                        </label>
-                      </div>
-
-                      {imageFiles.length > 0 && (
-                        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {imageFiles.map((file, index) => (
-                            <div key={index} className="relative">
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt={`Event image ${index + 1}`}
-                                className="w-full h-32 object-cover rounded"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => removeImage(index)}
-                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                        </span>
+                        <span className="text-purple-500 block mt-1">
+                          or drag and drop them here
+                        </span>
+                      </label>
                     </div>
 
-                    <button
-                      type="submit"
-                      className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-                    >
-                      Post Event
-                    </button>
-                  </form>
+                    {imageFiles.length > 0 && (
+                      <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {imageFiles.map((file, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`Event image ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg shadow-md"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index)}
+                              className="absolute top-2 right-2 bg-purple-900 bg-opacity-50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
+
+                <div className="pt-6">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  >
+                    {isSubmitting ? "Publishing..." : "Publish Event"}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

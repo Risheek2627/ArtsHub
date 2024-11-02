@@ -36,7 +36,7 @@ export const registerForEvent = async (req, res) => {
     const { studentId, name, email } = req.body;
     const eventId = req.params.eventId; // Get eventId from request parameters
 
-    if (!eventID || !studentID) {
+    if (!eventId || !studentId) {
       return res.status(400).json({ error: "EventID or StudentID is missing" });
     }
 
@@ -44,6 +44,7 @@ export const registerForEvent = async (req, res) => {
 
     console.log("EventID", eventId);
     console.log("Student ID", studentId);
+
     // Find the event by ID
     const event = await Event.findById(eventId);
     if (!event) {
@@ -61,7 +62,7 @@ export const registerForEvent = async (req, res) => {
     }
 
     // Add the registration to the event
-    event.registrations.push({ studentId, name, email });
+    event.registrations.push({ studentId, name, email, eventId });
     await event.save();
 
     res.status(201).json({ message: "Successfully registered for the event" });
