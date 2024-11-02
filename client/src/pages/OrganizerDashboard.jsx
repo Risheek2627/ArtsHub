@@ -434,6 +434,7 @@ const OrganizerDashboard = () => {
     dateTime: "",
     location: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -452,9 +453,7 @@ const OrganizerDashboard = () => {
     setImageFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return; // Prevent multiple submissions
 
@@ -466,6 +465,7 @@ const OrganizerDashboard = () => {
       createdAt: new Date().toISOString(),
     };
 
+    // Call the addEvent function to update context
     addEvent(newEvent);
 
     // Reset form
@@ -473,7 +473,7 @@ const OrganizerDashboard = () => {
     setImageFiles([]);
     navigate("/events");
 
-    setIsSubmitting(false); // Re-enable the submit button (if needed)
+    setIsSubmitting(false); // Re-enable the submit button
   };
 
   return (

@@ -329,8 +329,10 @@
 // export default AuthForm;
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const AuthForm = () => {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -346,6 +348,12 @@ const AuthForm = () => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userInfo");
+    navigate("/"); // Redirect to home
   };
 
   const handleSubmit = async (e) => {
@@ -382,14 +390,23 @@ const AuthForm = () => {
 
       if (response.ok) {
         if (isLogin) {
-          // Store the token if needed and redirect to dashboard
-          localStorage.setItem("token", data.token); // Example of storing token
-          // Redirect to the student dashboard or perform other actions
+          // Store the token and user data if needed
+          localStorage.setItem("token", data.token);
+          localStorage.setItem(
+            "userInfo",
+            JSON.stringify({
+              role: "student", // Set the role as 'student' after login
+              ...data.student,
+            })
+          );
+          navigate("/student-dashboard");
         } else {
-          // Switch to login after successful registration
+          // Redirect to login after registration
           setIsLogin(true);
-          resetFormData(); // Reset form data after registration
         }
+      } else {
+        setIsLogin(true);
+        resetFormData();
       }
     } catch (error) {
       console.error("Registration failed", error.message);
@@ -413,110 +430,118 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <h2 className="text-2xl font-bold mb-6">
-        {isLogin ? "Login" : "Register"}
-      </h2>
-      <form onSubmit={handleSubmit}>
-        {!isLogin && (
-          <>
-            <div className="mb-4">
-              <label
-                className="block text-sm font-medium mb-2"
-                htmlFor="fullName"
-              >
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="fullName"
-                id="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-sm font-medium mb-2"
-                htmlFor="institution"
-              >
-                Institution
-              </label>
-              <input
-                type="text"
-                name="institution"
-                id="institution"
-                value={formData.institution}
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-sm font-medium mb-2"
-                htmlFor="interests"
-              >
-                Interests (comma separated)
-              </label>
-              <input
-                type="text"
-                name="interests"
-                id="interests"
-                value={formData.interests}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-          </>
-        )}
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2" htmlFor="email">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2" htmlFor="password">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white font-bold py-2 rounded-md"
-        >
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600">
+      <div className="max-w-md w-full p-8 bg-white shadow-lg rounded-lg">
+        <h2 className="text-3xl font-semibold text-center mb-6">
           {isLogin ? "Login" : "Register"}
-        </button>
-        <p className="mt-4 text-center">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
+        </h2>
+        <form onSubmit={handleSubmit}>
+          {!isLogin && (
+            <>
+              <div className="mb-4">
+                <label
+                  className="block text-sm font-medium mb-2 text-gray-700"
+                  htmlFor="fullName"
+                >
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  name="fullName"
+                  id="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-sm font-medium mb-2 text-gray-700"
+                  htmlFor="institution"
+                >
+                  Institution
+                </label>
+                <input
+                  type="text"
+                  name="institution"
+                  id="institution"
+                  value={formData.institution}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-sm font-medium mb-2 text-gray-700"
+                  htmlFor="interests"
+                >
+                  Interests (comma separated)
+                </label>
+                <input
+                  type="text"
+                  name="interests"
+                  id="interests"
+                  value={formData.interests}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </>
+          )}
+          <div className="mb-4">
+            <label
+              className="block text-sm font-medium mb-2 text-gray-700"
+              htmlFor="email"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              className="block text-sm font-medium mb-2 text-gray-700"
+              htmlFor="password"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           <button
-            type="button"
-            onClick={switchAuthModeHandler}
-            className="text-blue-500 ml-1 underline"
+            type="submit"
+            className="w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 transition"
           >
-            {isLogin ? "Register" : "Login"}
+            {isLogin ? "Login" : "Register"}
           </button>
-        </p>
-      </form>
+          <p className="mt-4 text-center">
+            {isLogin ? "Don't have an account?" : "Already have an account?"}
+            <button
+              type="button"
+              onClick={switchAuthModeHandler}
+              className="text-blue-500 ml-1 underline"
+            >
+              {isLogin ? "Register" : "Login"}
+            </button>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

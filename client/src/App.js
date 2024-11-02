@@ -1,13 +1,28 @@
-// src/App.js
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import StudentLogin from "./pages/StudentLogin";
-import OrganizerLogin from "./pages/OrganizerLogin";
+import StudentAuthForm from "./pages/StudentAuthForm";
+import OrganizerAuthForm from "./pages/OrganizerAuthForm";
 import StudentDashboard from "./pages/StudentDashboard";
 import OrganizerDashboard from "./pages/OrganizerDashboard";
-import Events from "./components/Events"; // Updated import path
+import Events from "./components/Events";
 import { EventProvider } from "./context/EventContext";
+
+// Helper function to check authentication
+const isAuthenticated = (role) => {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  return userInfo && userInfo.role === role;
+};
+
+// Protected Route component
+const ProtectedRoute = ({ element, role }) => {
+  return isAuthenticated(role) ? element : <Navigate to="/" />;
+};
 
 function App() {
   return (
@@ -15,12 +30,25 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/student-login" element={<StudentLogin />} />
-          <Route path="/organizer-login" element={<OrganizerLogin />} />
-          <Route path="/student-dashboard" element={<StudentDashboard />} />
-          <Route path="/organizer-dashboard" element={<OrganizerDashboard />} />
-          <Route path="/events" element={<Events />} />{" "}
-          {/* Updated to use element instead of Component */}
+          <Route path="/student-login" element={<StudentAuthForm />} />
+          <Route path="/organizer-login" element={<OrganizerAuthForm />} />
+          <Route
+            path="/student-dashboard"
+            element={
+              <ProtectedRoute element={<StudentDashboard />} role="student" />
+            }
+          />
+          <Route
+            path="/organizer-dashboard"
+            element={
+              <ProtectedRoute
+                element={<OrganizerDashboard />}
+                role="organizer"
+              />
+            }
+          />
+
+          <Route path="/events" element={<Events />} />
         </Routes>
       </Router>
     </EventProvider>
