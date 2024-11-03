@@ -280,6 +280,7 @@ const AuthForm = () => {
       if (response.ok) {
         if (isLogin) {
           localStorage.setItem("token", data.token);
+          localStorage.setItem("studentId", data.student.id); // Assuming student.id contains the _id from the backend
           localStorage.setItem(
             "userInfo",
             JSON.stringify({

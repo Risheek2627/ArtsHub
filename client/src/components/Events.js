@@ -272,6 +272,7 @@ const Events = () => {
 
   const handleRegister = (eventId) => {
     const studentId = localStorage.getItem("studentId"); // Get the student ID from localStorage
+    console.log("Retrieved studentId : ", studentId); // debug line
     if (!studentId) {
       setAuthError("Please log in to register for events");
       return;
